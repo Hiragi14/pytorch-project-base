@@ -60,7 +60,11 @@ cover/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+notebooks/
 
 # Environments
 .venv
 venv
+
+# saved model 
+saved_models/
