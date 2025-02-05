@@ -1,0 +1,24 @@
+[project]
+name = "pytorch-project-base"
+version = "0.1.0"  # 静的なバージョン指定
+description = "A generic trainer for machine learning models."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "KAWAI Syusei", email = "kawai.syusei@gmail.com" }
+]
+keywords = ["machine learning", "training", "AI"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = ["torch>=1.10", "numpy>=1.21"]
+requires-python = ">= 3.8"
+
+[project.urls]
+homepage = "https://github.com/Hiragi14"
+repository = "https://github.com/Hiragi14/pytorch-project-base"
+
+[tool.setuptools.packages]
+find = { where = ["src"] }
