@@ -1,4 +1,5 @@
 import torch
+import os
 from tqdm import tqdm
 from abc import abstractmethod
 import logging
@@ -44,14 +45,14 @@ class BaseTrainer:
         raise NotImplementedError
     
     def train(self):
-        for epoch in range(self.start_epoch, self.epochs):
-            with tqdm(total=len(self.loader_train), desc=f"{GREEN+BOLD}Epoch {epoch+1}/{self.epochs} - Training{ENDC}", 
+        for epoch in range(self.start_epoch, self.epochs+1):
+            with tqdm(total=len(self.loader_train), desc=f"{GREEN+BOLD}Epoch {epoch}/{self.epochs} - Training{ENDC}", 
                         dynamic_ncols=False, ncols=100, leave=False) as pbar_train:
-                train_acc, train_loss = self._train_step(self.loader_train, pbar_train)
+                train_acc, train_loss = self._train_epoch(self.loader_train, pbar_train)
             
-            with tqdm(total=len(self.loader_valid), desc=f"{GREEN+BOLD}Epoch {epoch+1}/{self.epochs} - Validation{ENDC}", 
+            with tqdm(total=len(self.loader_valid), desc=f"{GREEN+BOLD}Epoch {epoch}/{self.epochs} - Validation{ENDC}", 
                         dynamic_ncols=False, ncols=100, leave=False) as pbar_valid:
-                valid_acc, valid_loss = self._valid_step(self.loader_valid, pbar_valid)
+                valid_acc, valid_loss = self._valid_epoch(self.loader_valid, pbar_valid)
             
             print("%sEpoch %d:%s valid[acc:%5.2f %%, loss:%5.2f %%] train[acc:%5.2f %%, loss:%5.2f %%]%s" 
                     % (CYAN+BOLD, epoch, ENDC+BOLD, valid_acc * 100, valid_loss, train_acc * 100, train_loss, ENDC))
@@ -68,5 +69,13 @@ class BaseTrainer:
                 'optimizer': self.optimizer.state_dict(),
                 'result': result
             }
-            torch.save(state, str(self.checkpoint_dir / f'checkpoint_{epoch}.pth'))
+            save_dir = self.checkpoint_dir + '/' + f'checkpoint_{epoch}.pth'
+            self._create_dir(save_dir)
+            torch.save(state, save_dir)
             self.logger.info('Checkpoint saved')
+
+    def _create_dir(self, path):
+        dir_path = os.path.dirname(path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+            self.logger.info(f'Directory created at {dir_path}!')
