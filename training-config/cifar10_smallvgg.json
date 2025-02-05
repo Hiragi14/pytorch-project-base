@@ -1,0 +1,49 @@
+{
+    "name": "cifar10_smallvgg",
+    "seed": 13,
+
+    "dataloader": {
+        "type": "Cifar10DataLoader",
+        "args":{
+            "data_dir": "/DeepLearning/Dataset/torchvision/CIFAR10",
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 2,
+            "validation_split": 0.0,
+            "download": false
+        }
+    },
+
+    "optimizer": {
+        "type": "SGD",
+        "args": {
+            "lr": 0.01
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 7,
+            "gamma": 0.1
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "type": "SmallVGG",
+        "args": {
+        }
+    },
+
+    "trainer": {
+        "epochs": 5,
+        "save_period": 2,
+        "checkpoint_dir": "saved_models/"
+    }
+}
