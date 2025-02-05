@@ -16,7 +16,7 @@ if __name__ == '__main__':
     logger.info("Hello, world!")
 
     parser = argparse.ArgumentParser(description='PyTorch Training')
-    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: config.json)')
+    parser.add_argument('-c', '--config', default='config.json', type=str, help='config file path (default: config.json)')
     args = parser.parse_args()
 
     config = json.load(open(args.config))

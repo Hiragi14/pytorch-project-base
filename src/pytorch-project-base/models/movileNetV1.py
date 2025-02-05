@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from base.base_model import BaseModel
 
 
 class DSCBlock(nn.Module):
@@ -40,7 +41,7 @@ class DSCBlock(nn.Module):
 
 
 
-class MobileNetV1(nn.Module):
+class MobileNetV1(BaseModel):
     """Information about MobileNet
     This class defines Mobile Net.
     

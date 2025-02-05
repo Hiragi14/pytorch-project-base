@@ -7,6 +7,7 @@ from utils.criterion import Criterion
 from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
 from trainer import Trainer
+import torchvision.models as torch_models
 
 
 def get_instance(module, name, config, **kwargs):
@@ -19,7 +20,12 @@ def main(config):
     train_dataloader = get_instance(dataloader, 'dataloader', config, train=True)
     valid_dataloader = get_instance(dataloader, 'dataloader', config, train=False)
 
-    model = get_instance(models, 'model', config)
+    if config['model']['torchvision_model']:
+        model = get_instance(torch_models, 'model', config)
+    else:
+        model = get_instance(models, 'model', config)
+        print(model.total_parameters())
+    
     model.to(device)
 
     criterion = Criterion(config)

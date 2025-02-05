@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from base.base_model import BaseModel
 
 
-class MLP(nn.Module):
+class MLP(BaseModel):
     def __init__(self, layer_sizes):
         super(MLP, self).__init__()
         layers = []

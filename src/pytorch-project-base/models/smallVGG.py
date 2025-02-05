@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.autograd import Function
+from base.base_model import BaseModel
 
 class ConvBlock(nn.Module):
     """ConvBlock"""
@@ -41,7 +41,7 @@ class FCBlock(nn.Module):
         return x
 
 
-class SmallVGG(nn.Module):
+class SmallVGG(BaseModel):
     """CnnNet"""
     def __init__(self):
         super(SmallVGG, self).__init__()
