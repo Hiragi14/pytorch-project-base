@@ -71,7 +71,7 @@ class BaseTrainer:
                 'optimizer': self.optimizer.state_dict(),
                 'result': result
             }
-            save_dir = self.checkpoint_dir + '/' + self.run_name + f'checkpoint_{epoch}.pth'
+            save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + f'checkpoint_{epoch}.pth'
             self._create_dir(save_dir)
             torch.save(state, save_dir)
             self.logger.info('Checkpoint saved')
