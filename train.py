@@ -11,6 +11,8 @@ from main import main
 
 
 if __name__ == '__main__':
+    # TODO: ログの出力先を変更する
+    # TODO: ログレベルの設定ファイルからの変更
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     logger.info("Hello, world!")
