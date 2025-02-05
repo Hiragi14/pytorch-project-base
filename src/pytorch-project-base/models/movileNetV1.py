@@ -53,7 +53,7 @@ class MobileNetV1(BaseModel):
         stride_num: if dataset is CIFAR, stride should be 1
     """
     def __init__(self, image_width, image_height, image_channels, num_class, stride_num=2, alpha=1):
-        super(MobileNet, self).__init__()
+        super(MobileNetV1, self).__init__()
         self.conv = nn.Conv2d(image_channels, 32, kernel_size=3,
                                         stride=stride_num, padding=1, bias=None)
         self.bn_conv = nn.BatchNorm2d(32)
