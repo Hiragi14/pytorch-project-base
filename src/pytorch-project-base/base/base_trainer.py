@@ -68,7 +68,7 @@ class BaseTrainer:
             
             self.logger.info(f'Epoch {epoch}/{self.epochs} - Validation: acc: {valid_acc}, loss: {valid_loss}')
             
-            print("%sEpoch %d:%s valid[acc:%5.2f %%, loss:%5.2f %%] train[acc:%5.2f %%, loss:%5.2f %%]%s" 
+            print("%sEpoch %d:%s train[acc:%5.2f %%, loss:%5.2f %%] valid[acc:%5.2f %%, loss:%5.2f %%]%s" 
                     % (CYAN+BOLD, epoch, ENDC+BOLD, valid_acc * 100, valid_loss, train_acc * 100, train_loss, ENDC))
             
 
