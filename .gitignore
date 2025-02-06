@@ -68,3 +68,7 @@ venv
 
 # saved model 
 saved_models/
+
+# log
+log
+wandb/

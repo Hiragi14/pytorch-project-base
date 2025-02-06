@@ -1,5 +1,7 @@
 {
     "name": "mnist_mlp",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
 
     "dataloader": {
         "type": "MnistDataLoader",
@@ -45,5 +47,15 @@
         "epochs": 1,
         "save_period": 2,
         "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "test",
+            "name": "mnist_mlp1",
+            "id": "mnist_mlp1",
+            "tags": ["mnist", "mlp"]
+        }
     }
 }

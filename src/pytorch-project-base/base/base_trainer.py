@@ -3,7 +3,7 @@ import os
 from tqdm import tqdm
 from abc import abstractmethod
 import logging
-
+from logger import web_logger
 
 # ANSIエスケープコード
 GREEN = '\033[92m'
@@ -38,6 +38,9 @@ class BaseTrainer:
         self.checkpoint_dir = trainer_cfg['checkpoint_dir']
         self.start_epoch = 1
 
+        # web logger
+        self.weblogger = getattr(web_logger, config['web_logger']['type'])(config)
+
     @abstractmethod
     def _train_epoch(self, laoder, pbar):
         raise NotImplementedError
@@ -47,20 +50,31 @@ class BaseTrainer:
         raise NotImplementedError
     
     def train(self):
+        self.logger.info('Start training...')
         for epoch in range(self.start_epoch, self.epochs+1):
             with tqdm(total=len(self.loader_train), desc=f"{GREEN+BOLD}Epoch {epoch}/{self.epochs} - Training{ENDC}", 
                         dynamic_ncols=False, ncols=100, leave=False) as pbar_train:
                 train_acc, train_loss = self._train_epoch(self.loader_train, pbar_train)
+
+            self.logger.info(f'Epoch {epoch}/{self.epochs} - Training: acc: {train_acc}, loss: {train_loss}')
             
             with tqdm(total=len(self.loader_valid), desc=f"{GREEN+BOLD}Epoch {epoch}/{self.epochs} - Validation{ENDC}", 
                         dynamic_ncols=False, ncols=100, leave=False) as pbar_valid:
                 valid_acc, valid_loss = self._valid_epoch(self.loader_valid, pbar_valid)
             
+            self.logger.info(f'Epoch {epoch}/{self.epochs} - Validation: acc: {valid_acc}, loss: {valid_loss}')
+            
             print("%sEpoch %d:%s valid[acc:%5.2f %%, loss:%5.2f %%] train[acc:%5.2f %%, loss:%5.2f %%]%s" 
                     % (CYAN+BOLD, epoch, ENDC+BOLD, valid_acc * 100, valid_loss, train_acc * 100, train_loss, ENDC))
             
+
             self._save_checkpoint(epoch, result={'train_loss': train_loss, 'train_acc': train_acc, 
                                                 'valid_loss': valid_loss, 'valid_acc': valid_acc})
+            
+            self.weblogger.log(epoch, valid_acc, valid_loss, self.optimizer)
+        
+        self.logger.info('Training finished!!!')
+        self.weblogger.finish()
 
     def _save_checkpoint(self, epoch, result):
         if epoch % self.save_period == 0:
