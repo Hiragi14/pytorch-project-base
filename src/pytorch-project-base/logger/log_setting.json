@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "WARNING",
+            "formatter": "newFormatter"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "log",
+            "level": "DEBUG",
+            "formatter": "newFormatter"
+        }
+    },
+    "formatters": {
+        "newFormatter": {
+            "format": "%(asctime)s: - %(name)s - %(levelname)s - [%(filename)s:%(lineno)s]: %(message)s"
+        }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": ["console", "file"]
+    }
+}

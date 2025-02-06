@@ -4,6 +4,7 @@ from torch import nn
 
 class Criterion:
     def __init__(self, config):
+        self.logger = logging.getLogger(self.__class__.__name__)
         self.criterion = self._initialize_criterion(config)
 
     def _initialize_criterion(self, config):
@@ -12,6 +13,7 @@ class Criterion:
         criterion_args = criterion_config['args']
 
         if hasattr(nn, criterion_name):
+            self.logger.info(f'Using {criterion_name} criterion.')
             return getattr(nn, criterion_name)(**criterion_args)
         else:
             logging.getLogger(__name__).warning(f'Criterion {criterion_name} not found. Using CrossEntropyLoss as default.')

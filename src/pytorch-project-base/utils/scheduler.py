@@ -4,6 +4,7 @@ import logging
 
 class Scheduler:
     def __init__(self, optimizer, config):
+        self.logger = logging.getLogger(self.__class__.__name__)
         self.optimizer = optimizer
         self.scheduler = self._initialize_scheduler(config)
 
@@ -13,6 +14,7 @@ class Scheduler:
         scheduler_args = scheduler_config['args']
 
         if hasattr(lr_scheduler, scheduler_name):
+            self.logger.info(f'Using {scheduler_name} scheduler.')
             return getattr(lr_scheduler, scheduler_name)(self.optimizer, **scheduler_args)
         else:
             logging.getLogger(__name__).warning(f'Scheduler {scheduler_name} not found. '

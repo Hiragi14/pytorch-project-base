@@ -1,6 +1,8 @@
 import random
 import numpy as np
 import logging
+import logging.config
+import json
 import torch
 import dataloader as dataloader
 import models as models
@@ -9,6 +11,10 @@ from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
 from trainer import Trainer
 import torchvision.models as torch_models
+
+def setup_logging(config_path='src/pytorch-project-base/logging/log_setting.json'):
+    config = json.load(open(config_path))
+    logging.config.dictConfig(config)
 
 
 def set_seed(seed):
@@ -26,7 +32,7 @@ def set_seed(seed):
     np.random.seed(seed)  # NumPyの乱数
     torch.backends.cudnn.deterministic = True  # 再現性のために設定
     torch.backends.cudnn.benchmark = False  # 再現性のために設定
-    logger.info(f'Seed:{seed} FIXED.')
+    logger.info(f'seed:{seed} SEED FIXED.')
 
 
 def get_instance(module, name, config, **kwargs):
@@ -34,6 +40,7 @@ def get_instance(module, name, config, **kwargs):
 
 
 def main(config):
+    setup_logging(config_path=config['log_config'])
     set_seed(config['seed'])
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
@@ -45,7 +52,7 @@ def main(config):
         model = get_instance(torch_models, 'model', config)
     else:
         model = get_instance(models, 'model', config)
-        print(model.total_parameters())
+        print(f"total parameters: {model.total_parameters()}")
     
     model.to(device)
 
