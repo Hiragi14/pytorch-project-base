@@ -1,0 +1,67 @@
+{
+    "name": "vit_t_16",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
+
+    "dataloader": {
+        "type": "ImageNetDataLoader",
+        "args":{
+            "data_dir": "/ldisk/DeepLearning/Dataset/ImageNet_torchvision",
+            "batch_size": 256,
+            "shuffle": true,
+            "num_workers": 4,
+            "validation_split": 0.0,
+            "download": false
+        }
+    },
+
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.005
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 7,
+            "gamma": 0.1
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "type": "ViT",
+        "args": {
+            "image_size": 224,
+            "patch_size": 16,
+            "num_classes": 1000,
+            "dim": 192,
+            "depth": 12,
+            "heads": 3,
+            "mlp_dim": 768
+        }
+    },
+
+    "trainer": {
+        "epochs": 5,
+        "save_period": 2,
+        "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "test",
+            "name": "vit_t_16",
+            "id": "vit_t_16",
+            "tags": ["vit_t_16", "ImageNet"]
+        }
+    }
+}

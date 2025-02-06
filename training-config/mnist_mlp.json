@@ -1,6 +1,7 @@
 {
     "name": "mnist_mlp",
     "seed": 13,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
 
     "dataloader": {
         "type": "MnistDataLoader",

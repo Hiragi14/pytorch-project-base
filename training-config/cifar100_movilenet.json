@@ -1,6 +1,7 @@
 {
     "name": "cifar100_movilenet",
     "seed": 13,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
 
     "dataloader": {
         "type": "Cifar100DataLoader",
