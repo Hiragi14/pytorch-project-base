@@ -78,11 +78,11 @@ class ImageNetDataLoader(BaseDataLoader):
     """
     def __init__(self, data_dir, batch_size, shuffle, num_workers, train=True, validation_split=0.0, download=False):
         trsfm = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
+            transforms.Resize((224, 224)),
+            # transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
         self.data_dir = data_dir
-        self.dataset = datasets.ImageNet(self.data_dir, split='train' if train else 'val', download=download, transform=trsfm)
+        self.dataset = datasets.ImageNet(self.data_dir, split='train' if train else 'val', transform=trsfm)
         super().__init__(self.dataset, batch_size, shuffle, num_workers, validation_split)
