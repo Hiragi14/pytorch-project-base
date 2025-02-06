@@ -36,7 +36,11 @@ class BaseTrainer:
         self.epochs = trainer_cfg['epochs']
         self.save_period = trainer_cfg['save_period']
         self.checkpoint_dir = trainer_cfg['checkpoint_dir']
-        self.start_epoch = 1
+
+        if 'start_epoch' in config:
+            self.start_epoch = config['start_epoch']
+        else:
+            self.start_epoch = 1
 
         # web logger
         self.weblogger = getattr(web_logger, config['web_logger']['type'])(config)
@@ -51,7 +55,7 @@ class BaseTrainer:
     
     def train(self):
         self.logger.info('Start training...')
-        for epoch in range(self.start_epoch, self.epochs+1):
+        for epoch in range(self.start_epoch, self.start_epoch + self.epochs):
             with tqdm(total=len(self.loader_train), desc=f"{GREEN+BOLD}Epoch {epoch}/{self.epochs} - Training{ENDC}", 
                         dynamic_ncols=False, ncols=100, leave=False) as pbar_train:
                 train_acc, train_loss = self._train_epoch(self.loader_train, pbar_train)
@@ -73,6 +77,7 @@ class BaseTrainer:
             
             self.weblogger.log(epoch, valid_acc, valid_loss, self.optimizer)
         
+        self._save_model()
         self.logger.info('Training finished!!!')
         self.weblogger.finish()
 
@@ -89,6 +94,13 @@ class BaseTrainer:
             self._create_dir(save_dir)
             torch.save(state, save_dir)
             self.logger.info('Checkpoint saved')
+    
+    def _save_model(self):
+        self.logger.info('Saving model...')
+        save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + 'completed_model.pth'
+        self._create_dir(save_dir)
+        torch.save(self.model.state_dict(), save_dir)
+        self.logger.info('Model saved')
 
     def _create_dir(self, path):
         dir_path = os.path.dirname(path)

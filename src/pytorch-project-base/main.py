@@ -60,6 +60,13 @@ def main(config):
     optimizer = Optimizer(model, config).get_optimizer()
     scheduler = Scheduler(optimizer, config)
 
+    if config['resume']:
+        checkpoint = torch.load(config['resume'])
+        model.load_state_dict(checkpoint['state_dict'])
+        config['start_epoch'] = checkpoint['epoch']
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        del checkpoint
+    
     trainer = Trainer(model, 
                       criterion, 
                       optimizer, 
