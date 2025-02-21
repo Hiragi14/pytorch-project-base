@@ -1,6 +1,6 @@
 import cv2
-from dct.dct_utils import dct_transform
-from img_utils.utils import scale_image, normalization_image
+from .dct.dct_utils import dct_transform
+from .img_utils.utils import scale_image, normalization_image
 
 
 def return_loader(block_size, alpha, mode='scipy', size=224):

@@ -2,7 +2,7 @@ import numpy as np
 from scipy.fft import dctn
 import cv2
 
-from img_utils.utils import pad_to_block_size, blocking, unblock, cut_ac
+from ..img_utils.utils import pad_to_block_size, blocking, unblock, cut_ac
 
 
 def dct_deal(data, block_size, alpha, mode='scipy'):

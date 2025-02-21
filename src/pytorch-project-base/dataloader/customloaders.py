@@ -1,6 +1,6 @@
 from torchvision import datasets, transforms
 from base import BaseDataLoader
-from preprocessing.loaders import return_loader_normalize
+from .preprocessing.loaders import return_loader_normalize
 
 class CustomImageNetDataLoader(BaseDataLoader):
     def __init__(self, data_dir, batch_size, shuffle, num_workers, train=True, validation_split=0.0, download=False, block_size=16, alpha=1, mode='scipy', size=224):
