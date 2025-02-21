@@ -1,5 +1,6 @@
 # pytorch-project-base
-PyTorchによる深層モデルの学習を簡単にするプロジェクト．
+PyTorchによる深層モデル(Computer Vision)の学習を簡単にするプロジェクト．
+Wandbによるロギング機能をサポート．
 
 ## Index
 
