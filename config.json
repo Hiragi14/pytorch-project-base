@@ -37,7 +37,9 @@
 
     "model": {
         "torchvision_model": false,
+        "timm_model": false,
         "type": "MLP",
+        "pretrained": false,
         "args": {
             "layer_sizes": [784, 128, 64,100, 10]
         }

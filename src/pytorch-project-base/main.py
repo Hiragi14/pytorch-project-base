@@ -11,6 +11,8 @@ from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
 from trainer import Trainer
 import torchvision.models as torch_models
+import timm
+from timm.models import create_model
 
 def setup_logging(config_path='src/pytorch-project-base/logging/log_setting.json'):
     config = json.load(open(config_path))
@@ -50,6 +52,8 @@ def main(config):
     if config['model']['torchvision_model']:
         # TODO:torchvisionのモデルを使う場合のデータローダーを作る（224x224にリサイズ）
         model = get_instance(torch_models, 'model', config)
+    elif config['model']['timm_model']:
+        model = create_model(config['model']['type'], pretrained=config['model']['pretrained'], **config['model']['args'])
     else:
         model = get_instance(models, 'model', config)
         print(f"total parameters: {model.total_parameters()}")
