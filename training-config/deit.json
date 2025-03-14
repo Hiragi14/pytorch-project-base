@@ -1,0 +1,62 @@
+{
+    "name": "deit_tiny_patch16_224",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
+
+    "dataloader": {
+        "type": "ImageNetDataLoader",
+        "args":{
+            "data_dir": "/ldisk/DeepLearning/Dataset/ImageNet_torchvision",
+            "batch_size": 256,
+            "shuffle": true,
+            "num_workers": 4,
+            "validation_split": 0.0,
+            "download": false
+        }
+    },
+
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.0005
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "CosineAnnealingLR",
+        "args": {
+            "T_max": 80,
+            "eta_min": 0.0001
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "timm_model": true,
+        "pretrained": false,
+        "type": "deit_tiny_patch16_224",
+        "args": {
+            "num_classes": 1000
+        }
+    },
+
+    "trainer": {
+        "epochs": 100,
+        "save_period": 10,
+        "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "timm_model_test",
+            "name": "deit_tiny_patch16_224",
+            "tags": ["deit_tiny_patch16_224", "ImageNet1k"]
+        }
+    }
+}
