@@ -43,7 +43,11 @@ class BaseTrainer:
             self.start_epoch = 1
 
         # web logger
-        self.weblogger = getattr(web_logger, config['web_logger']['type'])(config)
+        try:
+            self.weblogger = getattr(web_logger, config['web_logger']['type'])(config)
+        except:
+            print("web logger is not selected.")
+            pass
 
     @abstractmethod
     def _train_epoch(self, laoder, pbar):
