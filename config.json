@@ -49,15 +49,5 @@
         "epochs": 5,
         "save_period": 2,
         "checkpoint_dir": "saved_models/"
-    },
-
-    "web_logger": {
-        "type": "WandbLogger",
-        "args": {
-            "project": "test",
-            "name": "mnist2",
-            "id": "mnist2",
-            "tags": ["mnist", "mlp"]
-        }
     }
 }

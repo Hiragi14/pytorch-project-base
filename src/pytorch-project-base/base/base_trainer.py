@@ -47,6 +47,7 @@ class BaseTrainer:
             self.weblogger = getattr(web_logger, config['web_logger']['type'])(config)
         except:
             print("web logger is not selected.")
+            self.weblogger = getattr(web_logger, "EmptyLogger")
             pass
 
     @abstractmethod

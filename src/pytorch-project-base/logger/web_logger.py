@@ -2,6 +2,18 @@ import logging
 from base.base_weblogger import BaseWebLogger
 
 
+class EmptyLogger(BaseWebLogger):
+    def __init__(self, config):
+        self.logger = logging.getLogger(self.__class__.__name__)
+        super().__init__(config)
+
+    def log(self, epoch, accuracy, loss):
+        pass
+
+    def finish(self):
+        pass
+
+
 class WandbLogger(BaseWebLogger):
     def __init__(self, config):
         import wandb
