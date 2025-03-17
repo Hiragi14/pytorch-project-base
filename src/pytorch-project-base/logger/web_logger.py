@@ -10,7 +10,7 @@ class EmptyLogger(BaseWebLogger):
     def log(self, epoch, accuracy, loss):
         pass
 
-    def finish(self):
+    def finish():
         pass
 
 
