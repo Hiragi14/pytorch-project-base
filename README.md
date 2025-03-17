@@ -50,6 +50,8 @@ Wandbによるロギング機能をサポート．
 
     "model": {
         "torchvision_model": false,
+        "timm_model": false,
+        "pretrained": false,
         "type": "MLP",
         "args": {
             "layer_sizes": [784, 128, 64, 100, 10]
