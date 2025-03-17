@@ -4,10 +4,10 @@ from base import BaseTrainer
 
 class Trainer(BaseTrainer):
     def __init__(self, model, criterion, optimizer, config, device, 
-                 loader_train, loader_valid, lr_scheduler=None):
+                 loader_train, loader_valid, scheduler=None):
         super().__init__(model, criterion, optimizer, config, device, loader_train, loader_valid)
 
-        self.lr_scheduler = lr_scheduler
+        self.scheduler = scheduler
 
     def _train_epoch(self, loader, pbar):
         self.model.train()
@@ -35,6 +35,8 @@ class Trainer(BaseTrainer):
             # tqdmのプログレスバーの後ろにカスタムメッセージを表示
             pbar.set_postfix(loss=loss.item(), accuracy=(correct / total) * 100)
             pbar.update(1)
+        
+        self.scheduler.step()
         
         return correct / total, cumulative_loss / len(loader)
     

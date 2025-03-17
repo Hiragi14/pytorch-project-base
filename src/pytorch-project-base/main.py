@@ -62,7 +62,7 @@ def main(config):
 
     criterion = Criterion(config)
     optimizer = Optimizer(model, config).get_optimizer()
-    scheduler = Scheduler(optimizer, config)
+    scheduler = Scheduler(optimizer, config).get_scheduler()
 
     if config['resume']:
         checkpoint = torch.load(config['resume'])

@@ -16,9 +16,9 @@
     },
 
     "optimizer": {
-        "type": "SGD",
+        "type": "AdamW",
         "args": {
-            "lr": 0.1
+            "lr": 0.005
         }
     },
 
@@ -28,10 +28,10 @@
     },
 
     "scheduler": {
-        "type": "StepLR",
+        "type": "warmup_cos_annealing",
         "args": {
-            "step_size": 4,
-            "gamma": 0.1
+            "total_epochs": 100,
+            "warmup_epochs": 8
         }
     },
 
@@ -41,13 +41,22 @@
         "pretrained": false,
         "type": "MLP",
         "args": {
-            "layer_sizes": [784, 128, 64,100, 10]
+            "layer_sizes": [784, 100, 10]
         }
     },
 
     "trainer": {
-        "epochs": 10,
-        "save_period": 10,
+        "epochs": 100,
+        "save_period": 25,
         "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "test",
+            "name": "mlp",
+            "tags": ["mlp", "ImageNet"]
+        }
     }
 }
