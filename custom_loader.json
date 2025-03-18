@@ -1,0 +1,71 @@
+{
+    "name": "custom_loader_test",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
+
+    "dataloader": {
+        "type": "CustomLoadImageNetDataLoader",
+        "args":{
+            "data_dir": "/workspace/ImageNet",
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 4,
+            "validation_split": 0.0,
+            "download": false
+        },
+        "loader":{
+            "module": "pytorch_dct_loader",
+            "function": "return_loader_normalize",
+            "args": {
+                "size": 224,
+                "block_size": 16,
+                "alpha": 1.0
+            }
+        }
+    },
+
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.0005
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 11,
+            "gamma": 0.1
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "timm_model": true,
+        "pretrained": true,
+        "type": "deit_tiny_patch16_224",
+        "args": {
+            "num_classes": 1000
+        }
+    },
+
+    "trainer": {
+        "epochs": 10,
+        "save_period": 5,
+        "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "timm_model_test",
+            "name": "deit_tiny_patch16_224",
+            "tags": ["deit_tiny_patch16_224", "ImageNet1k"]
+        }
+    }
+}

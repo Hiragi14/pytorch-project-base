@@ -1,0 +1,62 @@
+{
+    "name": "swin_tiny_patch4_window7_224_pretrained",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
+
+    "dataloader": {
+        "type": "ImageNetDataLoader",
+        "args":{
+            "data_dir": "/workspace/ImageNet",
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 4,
+            "validation_split": 0.0,
+            "download": false
+        }
+    },
+
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.005
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "warmup_cos_annealing",
+        "args": {
+            "total_epochs": 100,
+            "warmup_epochs": 8
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "timm_model": true,
+        "pretrained": true,
+        "type": "swin_tiny_patch4_window7_224",
+        "args": {
+            "num_classes": 1000
+        }
+    },
+
+    "trainer": {
+        "epochs": 100,
+        "save_period": 10,
+        "checkpoint_dir": "saved_models/"
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "timm_model_test",
+            "name": "swin_tiny_patch4_window7_224",
+            "tags": ["swin_tiny_patch4_window7_224", "ImageNet1k"]
+        }
+    }
+}

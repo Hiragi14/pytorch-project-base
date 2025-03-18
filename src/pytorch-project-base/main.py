@@ -1,4 +1,5 @@
 import random
+import importlib
 import numpy as np
 import logging
 import logging.config
@@ -41,13 +42,25 @@ def get_instance(module, name, config, **kwargs):
     return getattr(module, config[name]['type'])(**config[name]['args'], **kwargs)
 
 
+def get_dataloaders(config):
+    kwargs = config["dataloader"]["args"]
+    if (config["dataloader"]["type"]=="CustomLoadImageNetDataLoader"):
+        module = importlib.import_module(config['dataloader']['loader']['module'])
+        loader = getattr(module, config['dataloader']['loader']['function'])(**config['dataloader']['loader']["args"])
+        kwargs["loader"] = loader
+        
+    train_dataloader = getattr(dataloader, config["dataloader"]["type"])(**kwargs, train=True)
+    valid_dataloader = getattr(dataloader, config["dataloader"]["type"])(**kwargs, train=False)
+    return train_dataloader, valid_dataloader
+
 def main(config):
     setup_logging(config_path=config['log_config'])
     set_seed(config['seed'])
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    train_dataloader = get_instance(dataloader, 'dataloader', config, train=True)
-    valid_dataloader = get_instance(dataloader, 'dataloader', config, train=False)
+    # train_dataloader = get_instance(dataloader, 'dataloader', config, train=True)
+    # valid_dataloader = get_instance(dataloader, 'dataloader', config, train=False)
+    train_dataloader, valid_dataloader = get_dataloaders(config)
 
     if config['model']['torchvision_model']:
         # TODO:torchvisionのモデルを使う場合のデータローダーを作る（224x224にリサイズ）

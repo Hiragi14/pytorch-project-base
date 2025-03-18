@@ -74,7 +74,7 @@ class SVHNDataLoader(BaseDataLoader):
 
 class ImageNetDataLoader(BaseDataLoader):
     """
-    ImageNet data loading demo using BaseDataLoader
+    ImageNet data loading using BaseDataLoader
     """
     def __init__(self, data_dir, batch_size, shuffle, num_workers, train=True, validation_split=0.0, download=False):
         trsfm = transforms.Compose([
@@ -85,4 +85,17 @@ class ImageNetDataLoader(BaseDataLoader):
         ])
         self.data_dir = data_dir
         self.dataset = datasets.ImageNet(self.data_dir, split='train' if train else 'val', transform=trsfm)
+        super().__init__(self.dataset, batch_size, shuffle, num_workers, validation_split)
+
+
+class CustomLoadImageNetDataLoader(BaseDataLoader):
+    """
+    ImageNet data loading and dct using BaseDataLoader
+    """
+    def __init__(self, data_dir, batch_size, shuffle, num_workers, loader, train=True, validation_split=0.0, download=False):
+        trsfm = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+        self.data_dir = data_dir
+        self.dataset = datasets.ImageNet(self.data_dir, split='train' if train else 'val', transform=trsfm, loader=loader)
         super().__init__(self.dataset, batch_size, shuffle, num_workers, validation_split)
