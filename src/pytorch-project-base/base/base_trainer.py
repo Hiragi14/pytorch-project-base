@@ -95,16 +95,16 @@ class BaseTrainer:
                 'optimizer': self.optimizer.state_dict(),
                 'result': result
             }
-            save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + f'checkpoint_{epoch}.pth'
-            self._create_dir(save_dir)
-            torch.save(state, save_dir)
+            self.save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + f'checkpoint_{epoch}.pth'
+            self._create_dir(self.save_dir)
+            torch.save(state, self.save_dir)
             self.logger.info('Checkpoint saved')
     
     def _save_model(self):
         self.logger.info('Saving model...')
-        save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + 'completed_model.pth'
-        self._create_dir(save_dir)
-        torch.save(self.model.state_dict(), save_dir)
+        self.save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + 'completed_model.pth'
+        self._create_dir(self.save_dir)
+        torch.save(self.model.state_dict(), self.save_dir)
         self.logger.info('Model saved')
 
     def _create_dir(self, path):

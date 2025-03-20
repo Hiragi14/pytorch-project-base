@@ -72,3 +72,8 @@ saved_models/
 # log
 log
 wandb/
+
+
+# 
+training-config/efficientformer.json
+test.json

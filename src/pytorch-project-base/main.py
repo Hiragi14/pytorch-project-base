@@ -10,7 +10,7 @@ import models as models
 from utils.criterion import Criterion
 from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
-from trainer import Trainer
+from trainer import Trainer, Trainer_HF
 import torchvision.models as torch_models
 import timm
 from timm.models import create_model
@@ -84,7 +84,8 @@ def main(config):
         optimizer.load_state_dict(checkpoint['optimizer'])
         del checkpoint
     
-    trainer = Trainer(model, 
+    if config["trainer"]["huggingface"]["use"]:
+        trainer = Trainer_HF(model, 
                       criterion, 
                       optimizer, 
                       config, 
@@ -92,6 +93,15 @@ def main(config):
                       train_dataloader, 
                       valid_dataloader, 
                       scheduler)
+    else:
+        trainer = Trainer(model, 
+                        criterion, 
+                        optimizer, 
+                        config, 
+                        device, 
+                        train_dataloader, 
+                        valid_dataloader, 
+                        scheduler)
 
     trainer.train()
 
