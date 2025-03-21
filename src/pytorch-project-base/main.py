@@ -10,10 +10,13 @@ import models as models
 from utils.criterion import Criterion
 from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
+from utils.json_config import config_json_element_check
 from trainer import Trainer, Trainer_HF
+import trainer as trainer_
 import torchvision.models as torch_models
 import timm
 from timm.models import create_model
+
 
 def setup_logging(config_path='src/pytorch-project-base/logging/log_setting.json'):
     config = json.load(open(config_path))
@@ -53,13 +56,26 @@ def get_dataloaders(config):
     valid_dataloader = getattr(dataloader, config["dataloader"]["type"])(**kwargs, train=False)
     return train_dataloader, valid_dataloader
 
+
+def clip_dataparallel(model, config):
+    logger = logging.getLogger(__name__)
+    try:
+        if config['trainer']['dataparallel']:
+            model = torch.nn.DataParallel(model)
+            logger.info("DataParallel is used.")
+    except:
+        logger.info("DataParallel is not used.")
+        pass
+
+
 def main(config):
+    logger = logging.getLogger(__name__)
+    config_json_element_check(config)
     setup_logging(config_path=config['log_config'])
     set_seed(config['seed'])
     device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # train_dataloader = get_instance(dataloader, 'dataloader', config, train=True)
-    # valid_dataloader = get_instance(dataloader, 'dataloader', config, train=False)
+
+
     train_dataloader, valid_dataloader = get_dataloaders(config)
 
     if config['model']['torchvision_model']:
@@ -72,6 +88,7 @@ def main(config):
         print(f"total parameters: {model.total_parameters()}")
     
     model.to(device)
+    clip_dataparallel(model, config)
 
     criterion = Criterion(config)
     optimizer = Optimizer(model, config).get_optimizer()
@@ -84,24 +101,16 @@ def main(config):
         optimizer.load_state_dict(checkpoint['optimizer'])
         del checkpoint
     
-    if config["trainer"]["huggingface"]["use"]:
-        trainer = Trainer_HF(model, 
-                      criterion, 
-                      optimizer, 
-                      config, 
-                      device, 
-                      train_dataloader, 
-                      valid_dataloader, 
-                      scheduler)
-    else:
-        trainer = Trainer(model, 
-                        criterion, 
-                        optimizer, 
-                        config, 
-                        device, 
-                        train_dataloader, 
-                        valid_dataloader, 
-                        scheduler)
+    trainer_name = "Trainer_HF" if config["trainer"]["huggingface"]["use"] else "Trainer"
+    logger.info(f"Trainer: {trainer_name}")
+    trainer = getattr(trainer_, trainer_name)(model, 
+                                            criterion, 
+                                            optimizer, 
+                                            config, 
+                                            device, 
+                                            train_dataloader, 
+                                            valid_dataloader, 
+                                            scheduler)
 
     trainer.train()
 
