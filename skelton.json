@@ -1,0 +1,67 @@
+{
+    "name": "mnist_mlp",
+    "seed": 42,
+    "log_config": "src/pytorch-project-base/logger/log_setting.json",
+
+    "dataloader": {
+        "type": "MnistDataLoader",
+        "args":{
+            "data_dir": "/DeepLearning/Dataset/torchvision/MNIST",
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 2,
+            "validation_split": 0.0,
+            "download": false
+        }
+    },
+
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 0.005
+        }
+    },
+
+    "criterion": {
+        "type": "CrossEntropyLoss",
+        "args": {}
+    },
+
+    "scheduler": {
+        "type": "warmup_cos_annealing",
+        "args": {
+            "total_epochs": 100,
+            "warmup_epochs": 8
+        }
+    },
+
+    "model": {
+        "torchvision_model": false,
+        "timm_model": false,
+        "pretrained": false,
+        "type": "MLP",
+        "args": {
+            "layer_sizes": [784, 100, 10]
+        }
+    },
+
+    "trainer": {
+        "epochs": 100,
+        "save_period": 25,
+        "checkpoint_dir": "saved_models/",
+        "huggingface": {
+            "use": true,
+            "token": "hogehoge",
+            "repo": "base/project"
+        }
+    },
+
+    "web_logger": {
+        "type": "WandbLogger",
+        "args": {
+            "project": "test",
+            "name": "mlp",
+            "tags": ["mlp", "ImageNet"]
+        }
+    }
+}

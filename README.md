@@ -7,6 +7,7 @@ Wandbによるロギング機能をサポート．
 - [pytorch-project-base](#pytorch-project-base)
   - [Index](#index)
   - [Usage](#usage)
+  - [カスタムローダーの使用](#カスタムローダーの使用)
   - [Floder](#floder)
 
 ## Usage
@@ -61,7 +62,21 @@ Wandbによるロギング機能をサポート．
     "trainer": {
         "epochs": 1,
         "save_period": 2,
-        "checkpoint_dir": "saved_models/" // change model save dir on demand
+        "checkpoint_dir": "saved_models/", // change model save dir on demand
+        "huggingface": {
+            "use": true,
+            "token": "hogehoge",
+            "repo": "base/project"
+        }
+    },
+
+    "web_logger": { # this is optional
+        "type": "WandbLogger",
+        "args": {
+            "project": "timm_model_test",
+            "name": "deit_tiny_patch16_224",
+            "tags": ["deit_tiny_patch16_224", "ImageNet1k"]
+        }
     }
 }
 ```
@@ -72,6 +87,31 @@ Wandbによるロギング機能をサポート．
 python train.py -c config.json
 # python train.py --config config.json
 # python train.py
+```
+
+## カスタムローダーの使用
+- pythonモジュールとしてローダーを用意して読み込むか，src/pytorch-project-base/ 直下に読み込める形で配置してください．
+```json
+    "dataloader": {
+        "type": "CustomLoadImageNetDataLoader",
+        "args":{
+            "data_dir": "/workspace/ImageNet",
+            "batch_size": 128,
+            "shuffle": true,
+            "num_workers": 4,
+            "validation_split": 0.0,
+            "download": false
+        },
+        "loader":{
+            "module": "pytorch_dct_loader",
+            "function": "return_loader_normalize",
+            "args": {
+                "size": 224,
+                "block_size": 16,
+                "alpha": 1.0
+            }
+        }
+    },
 ```
 
 
