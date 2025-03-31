@@ -82,7 +82,6 @@ class Trainer_HF(BaseTrainer):
     
     def _huggingface_model_save(self):
         try:
-            token = self.config["trainer"]["huggingface"]["token"]
             repo = self.config["trainer"]["huggingface"]["repo"]
         except:
             self.logger.warning("huggingface model saving used, but huggingface token or repo is empty.")
@@ -97,7 +96,6 @@ class Trainer_HF(BaseTrainer):
                 path_or_fileobj=self.save_dir,
                 path_in_repo=f"{current_date}/{self.save_dir}",
                 repo_id=repo,
-                token=token
             )
             
             print(f"重みファイルが正常にアップロードされました: https://huggingface.co/{repo}")
