@@ -73,7 +73,8 @@ def main(config):
     config_json_element_check(config)
     setup_logging(config_path=config['log_config'])
     set_seed(config['seed'])
-    device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device=torch.device(config['device'] if torch.cuda.is_available() else "cpu")
 
 
     train_dataloader, valid_dataloader = get_dataloaders(config)
@@ -94,7 +95,11 @@ def main(config):
     optimizer = Optimizer(model, config).get_optimizer()
     scheduler = Scheduler(optimizer, config).get_scheduler()
 
-    if config['resume']:
+    print(f"resume: {config['resume']}")
+    if config['resume'] is not None:
+        # resume training from checkpoint
+        logger.info(f"Resuming from checkpoint: {config['resume']}")
+        print(f"Resuming from checkpoint: {config['resume']}")
         checkpoint = torch.load(config['resume'])
         model.load_state_dict(checkpoint['state_dict'])
         config['start_epoch'] = checkpoint['epoch']
