@@ -40,7 +40,7 @@ class Trainer_HF(BaseTrainer):
             pbar.update(1)
         
         # self.model.check_gradients()
-        self.scheduler.step()
+        self.scheduler.step()# if self.scheduler is not None else None
         
         return correct / total, cumulative_loss / len(loader)
     
@@ -79,6 +79,10 @@ class Trainer_HF(BaseTrainer):
     def _save_model(self):
         super()._save_model()
         self._huggingface_model_save()
+
+
+    def _metrics(self, epoch, valid_acc, valid_loss, train_acc, train_loss):
+        return super()._metrics(epoch, valid_acc, valid_loss, train_acc, train_loss)
         
     
     def _huggingface_model_save(self):

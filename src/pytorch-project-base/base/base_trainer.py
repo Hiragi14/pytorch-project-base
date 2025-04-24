@@ -4,6 +4,8 @@ from tqdm import tqdm
 from abc import abstractmethod
 import logging
 from logger import web_logger
+from datetime import datetime
+import json
 
 # ANSIエスケープコード
 GREEN = '\033[92m'
@@ -14,6 +16,11 @@ MAGENTA = '\033[35m'
 BRUE = '\033[34m'
 BOLD = '\033[1m'
 ENDC = '\033[0m'
+
+# TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+TIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
+TIME = datetime.now().strftime(TIME_FORMAT)
+
 
 class BaseTrainer:
     def __init__(self, model, criterion, optimizer, config, device, loader_train, loader_valid):
@@ -80,7 +87,8 @@ class BaseTrainer:
             self._save_checkpoint(epoch, result={'train_loss': train_loss, 'train_acc': train_acc, 
                                                 'valid_loss': valid_loss, 'valid_acc': valid_acc})
             
-            self.weblogger.log(epoch, valid_acc, valid_loss, self.optimizer)
+            # self.weblogger.log(epoch, valid_acc, valid_loss, self.optimizer)
+            self._metrics(epoch, valid_acc, valid_loss, train_acc, train_loss)
         
         self._save_model()
         self.logger.info('Training finished!!!')
@@ -95,20 +103,30 @@ class BaseTrainer:
                 'optimizer': self.optimizer.state_dict(),
                 'result': result
             }
-            self.save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + f'checkpoint_{epoch}.pth'
+            self.save_dir = self.checkpoint_dir + '/checkpoints/' + f'checkpoint_{epoch}epoch_{TIME}.pth'
             self._create_dir(self.save_dir)
             torch.save(state, self.save_dir)
             self.logger.info('Checkpoint saved')
     
     def _save_model(self):
         self.logger.info('Saving model...')
-        self.save_dir = self.checkpoint_dir + '/' + self.run_name + '/' + 'completed_model.pth'
+        self.save_dir = self.checkpoint_dir + '/final/' + f'completed_model_{TIME}.pth'
         self._create_dir(self.save_dir)
         torch.save(self.model.state_dict(), self.save_dir)
         self.logger.info('Model saved')
+        self._save_json(self.checkpoint_dir + '/final/', self.config)
 
     def _create_dir(self, path):
         dir_path = os.path.dirname(path)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
             self.logger.info(f'Directory created at {dir_path}!')
+
+    def _metrics(self, epoch, valid_acc, valid_loss, train_acc, train_loss):
+        self.weblogger.log(epoch, valid_acc, valid_loss, self.optimizer)
+    
+    def _save_json(self, path, data):
+        path = os.path.join(path, f'{self.run_name}.json')
+        with open(path, 'w') as f:
+            json.dump(data, f, indent=4)
+        self.logger.info(f'Saved json file at {path}')

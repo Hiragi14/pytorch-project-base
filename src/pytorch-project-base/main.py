@@ -11,6 +11,7 @@ from utils.criterion import Criterion
 from utils.optimizer import Optimizer
 from utils.scheduler import Scheduler
 from utils.json_config import config_json_element_check
+from utils.registry import MODEL_REGISTRY
 from trainer import Trainer, Trainer_HF
 import trainer as trainer_
 import torchvision.models as torch_models
@@ -85,9 +86,11 @@ def main(config):
     elif config['model']['timm_model']:
         model = create_model(config['model']['type'], pretrained=config['model']['pretrained'], **config['model']['args'])
     else:
-        model = get_instance(models, 'model', config)
-        print(f"total parameters: {model.total_parameters()}")
-    
+        # model = get_instance(models, 'model', config)
+        model_cls = MODEL_REGISTRY[config['model']['type']]
+        model = model_cls(**config['model']['args'])
+        # print(f"total parameters: {model.total_parameters()}")
+
     model.to(device)
     clip_dataparallel(model, config)
 
@@ -105,19 +108,43 @@ def main(config):
         config['start_epoch'] = checkpoint['epoch']
         optimizer.load_state_dict(checkpoint['optimizer'])
         del checkpoint
-    
+
     trainer_name = "Trainer_HF" if config["trainer"]["huggingface"]["use"] else "Trainer"
+    if config["trainer"]["huggingface"]["use"]:
+        trainer_name = "Trainer_HF"
+    elif config['database']['path'] is not None:
+        trainer_name = "Trainer_DB_HF"
+    else:
+        trainer_name = "Trainer"
     logger.info(f"Trainer: {trainer_name}")
-    trainer = getattr(trainer_, trainer_name)(model, 
-                                            criterion, 
-                                            optimizer, 
-                                            config, 
-                                            device, 
-                                            train_dataloader, 
-                                            valid_dataloader, 
+    trainer = getattr(trainer_, trainer_name)(model,
+                                            criterion,
+                                            optimizer,
+                                            config,
+                                            device,
+                                            train_dataloader,
+                                            valid_dataloader,
                                             scheduler)
-
-    trainer.train()
-
-
-    
+    try:
+        trainer.train()
+    except KeyboardInterrupt:
+        if trainer_name == "Trainer_DB_HF":
+            trainer.db.update_state(
+                experiment_id=trainer.experiment_id,
+                state="interrupted"
+            )
+            trainer.db.close()
+        logger.info("Training interrupted by user.")
+        print("Training interrupted by user.")
+    except Exception as e:
+        if trainer_name == "Trainer_DB_HF":
+            trainer.db.update_state(
+                experiment_id=trainer.experiment_id,
+                state="failed"
+            )
+            trainer.db.close()
+        logger.error(f"Training failed: {e}")
+        print(f"Training failed: {e}")
+    finally:
+        if trainer_name == "Trainer_DB_HF":
+            trainer.db.close()
