@@ -39,6 +39,7 @@ class Trainer_HF(BaseTrainer):
             pbar.set_postfix(loss=loss.item(), accuracy=(correct / total) * 100)
             pbar.update(1)
         
+        # self.model.check_gradients()
         self.scheduler.step()
         
         return correct / total, cumulative_loss / len(loader)
