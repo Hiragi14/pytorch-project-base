@@ -3,8 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from base.base_model import BaseModel
+from utils.registry import register_model
 
 
+@register_model("mlp")
 class MLP(BaseModel):
     def __init__(self, layer_sizes):
         super(MLP, self).__init__()

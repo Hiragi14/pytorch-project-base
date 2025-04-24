@@ -1,46 +1,11 @@
-import numpy as np
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from base.base_model import BaseModel
-
-class ConvBlock(nn.Module):
-    """ConvBlock"""
-    def __init__(self, in_ch, out_ch, kernel_size=3, padding=1, bias=True, batchnorm=True, relu=True, pool_size=None):
-        super(ConvBlock, self).__init__()
-        self.conv = nn.Conv2d(in_ch, out_ch, kernel_size=kernel_size, padding=padding, bias=bias)
-        self.bn = nn.BatchNorm2d(out_ch) if batchnorm else None
-        self.pool = nn.MaxPool2d(pool_size, pool_size) if pool_size else None
-        self.relu = nn.ReLU() if relu else None
-    def forward(self, x):
-        x = self.conv(x)
-        if self.bn:
-            x = self.bn(x)
-        if self.relu:
-            x = self.relu(x)
-        if self.pool:
-            x = self.pool(x)
-        # if self.relu:
-        #     x = self.relu(x)
-        return x
+from .convolution import ConvBlock, FCBlock
+from utils.registry import register_model
 
 
-class FCBlock(nn.Module):
-    """FCBlock"""
-    def __init__(self, in_dim, out_dim, bias=True, relu=True, batchnorm=False):
-        super(FCBlock, self).__init__()
-        self.fc = nn.Linear(in_dim, out_dim, bias=bias)
-        self.bn = nn.BatchNorm1d(out_dim) if batchnorm else None
-        self.relu = nn.ReLU() if relu else None
-    def forward(self, x):
-        x = self.fc(x)
-        if self.bn:
-            x = self.bn(x)
-        if self.relu:
-            x = self.relu(x)
-        return x
-
-
+@register_model("SmallVGG")
 class SmallVGG(BaseModel):
     """CnnNet"""
     def __init__(self):
