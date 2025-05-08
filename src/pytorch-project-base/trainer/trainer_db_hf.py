@@ -22,7 +22,6 @@ class Trainer_DB_HF(Trainer_HF):
             model_type=self.config['model']['type'],
             config_json=str(self.config)
         )
-        super()._save_json(self.checkpoint_dir + f'/experiment-{self.experiment_id}/final/', self.config)
     
     def _train_epoch(self, loader, pbar):
         return super()._train_epoch(loader, pbar)
@@ -54,11 +53,12 @@ class Trainer_DB_HF(Trainer_HF):
     
     def _save_model(self):
         self.logger.info('Saving model...')
-        self.save_dir = self.checkpoint_dir + f'/experiment-{self.experiment_id}/final/' + f'completed_model_{TIME}.pth'
+        self.save_dir = self.checkpoint_dir + f'experiment-{self.experiment_id}/final/' + f'completed_model_{TIME}.pth'
         self._create_dir(self.save_dir)
         torch.save(self.model.state_dict(), self.save_dir)
         self.logger.info('Model saved')
         self._huggingface_model_save() if self.config["trainer"]["huggingface"]["use"] else None
+        super()._save_json(self.checkpoint_dir + f'experiment-{self.experiment_id}/final/', self.config)
         self.db.update_state(
             experiment_id=self.experiment_id,
             state="completed"
