@@ -110,22 +110,22 @@ def main(config):
         del checkpoint
 
     trainer_name = "Trainer_HF" if config["trainer"]["huggingface"]["use"] else "Trainer"
-    if config["trainer"]["huggingface"]["use"]:
-        trainer_name = "Trainer_HF"
-    elif config['database']['path'] is not None:
+    if config['database']['path'] is not None:
         trainer_name = "Trainer_DB_HF"
+    elif config["trainer"]["huggingface"]["use"]:
+        trainer_name = "Trainer_HF"
     else:
         trainer_name = "Trainer"
     logger.info(f"Trainer: {trainer_name}")
-    trainer = getattr(trainer_, trainer_name)(model,
-                                            criterion,
-                                            optimizer,
-                                            config,
-                                            device,
-                                            train_dataloader,
-                                            valid_dataloader,
-                                            scheduler)
     try:
+        trainer = getattr(trainer_, trainer_name)(model,
+                                                criterion,
+                                                optimizer,
+                                                config,
+                                                device,
+                                                train_dataloader,
+                                                valid_dataloader,
+                                                scheduler)
         trainer.train()
     except KeyboardInterrupt:
         if trainer_name == "Trainer_DB_HF":
