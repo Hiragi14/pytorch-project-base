@@ -28,3 +28,28 @@ class Custom_Scheduler:
         )
 
         return scheduler
+    
+    def timm_CosineLRScheduler(self, optimizer, **kwargs):
+        """
+        timm ライブラリの CosineLRScheduler を使用するためのラッパー関数
+        """
+        from timm.scheduler import CosineLRScheduler
+
+        # CosineLRScheduler の初期化
+        scheduler = CosineLRScheduler(
+            optimizer,
+            t_initial=kwargs.get('t_initial', 100),
+            warmup_t=kwargs.get('warmup_t', 0),
+            warmup_lr_init=kwargs.get('warmup_lr_init', 0.0),
+            warmup_prefix=kwargs.get('warmup_prefix', True),
+            decay_rate=kwargs.get('decay_rate', 1.0),
+            cycle_limit=kwargs.get('cycle_limit', 1),
+            t_mul=kwargs.get('t_mul', 1.0),
+            lr_min=kwargs.get('lr_min', 0.0),
+            noise_range_t=kwargs.get('noise_range_t', None),
+            noise_pct=kwargs.get('noise_pct', None),
+            noise_std=kwargs.get('noise_std', None),
+            noise_seed=kwargs.get('noise_seed', None)
+        )
+
+        return scheduler
