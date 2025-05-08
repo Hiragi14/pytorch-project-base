@@ -93,13 +93,14 @@ class Trainer_HF(BaseTrainer):
             return
         
         api = HfApi()
-        
+        # directoryの分割
+        above, below = self.split_path_target(self.save_dir, "saved_models")
         try:
             current_date = datetime.now().strftime("%Y-%m-%d")
             # 重みファイルのアップロード
             api.upload_file(
                 path_or_fileobj=self.save_dir,
-                path_in_repo=f"{current_date}/{self.save_dir}",
+                path_in_repo=f"{below}",
                 repo_id=repo,
             )
             
@@ -108,4 +109,17 @@ class Trainer_HF(BaseTrainer):
         except Exception as ex:
             print(f"重みファイルのアップロードに失敗しました: https://huggingface.co/{repo}")
             self.logger.warning(f"FAILED to save model on huggingface! Exception: {ex}")
-        
+    
+    def split_path_target(self, path, target_dir):
+        """
+        指定されたディレクトリの上と下を分ける関数
+        """
+        parts = path.split(os.sep)
+        if target_dir in parts:
+            index = parts.index(target_dir)
+            above = os.sep.join(parts[:index])  # 'target_dir'より上
+            below = os.sep.join(parts[index:])  # 'target_dir'以下
+            return above, below
+        else:
+            raise ValueError(f"'{target_dir}' not found in model save path.")
+        return above, below
